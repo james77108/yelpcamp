@@ -3,6 +3,7 @@ const express = require ('express');
 const path = require('path') //??? what is this for
 const mongoose = require('mongoose');
 const Campground = require('./models/campground') // import model
+const methodOverride = require('method-override')
 
 const app = express();
 
@@ -27,7 +28,8 @@ db.once("open", ()=>{
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
 
-app.use(express.urlencoded ({extended: true}))
+app.use(express.urlencoded ({extended: true}));
+app.use(methodOverride('_method'));
 
 // render home view
 // for initial testing/set-up, use res.send('Hello YelpCamp')
@@ -68,6 +70,19 @@ app.post('/campgrounds', async(req, res) => {
 app.get('/campgrounds/:id', async(req,res) => {
     const campground = await Campground.findById(req.params.id)
     res.render('campgrounds/show', {campground});
+})
+
+// set up edit page
+app.get('/campgrounds/:id/edit', async(req,res) => {
+   const campground = await Campground.findById(req.params.id);
+   res.render('campgrounds/edit', {campground});
+})
+
+// update
+app.put('/campgrounds/:id', async(req, res) => {
+    const {id} = req.params;
+    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground});
+    res.redirect(`/campgrounds/${campground._id}`)
 })
 
 // set up listening portal at 3000
