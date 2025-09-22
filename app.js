@@ -40,6 +40,14 @@ app.get('/makecampground', async (req, res) => {
     res.send(camp)
 })
 
+// listen to GET requests to /campgrounds
+// fetch campgrounds from MongoDB
+// uses Mongoose to query the database (find ({}) with empty filter returns all campgrounds from the campgrounds collection
+app.get('/campgrounds', async (req,res) => {
+    const campgrounds = await Campground.find({});
+    res.render('campgrounds/index', {campgrounds}); //passes campgrounds data to the template
+})
+
 // set up listening portal at 3000
 app.listen(3000, () => {
     console.log ('Serving on port 3000')
