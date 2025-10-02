@@ -2,6 +2,7 @@
 const express = require ('express');
 const path = require('path') //??? what is this for
 const mongoose = require('mongoose');
+const ejsMate = require('ejs-mate');
 const Campground = require('./models/campground') // import model
 const methodOverride = require('method-override')
 
@@ -23,6 +24,9 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", ()=>{
     console.log("Database connected");
 });
+
+// set up ejs-mate
+app.engine('ejs', ejsMate)
 
 // set up view engine
 app.set('view engine', 'ejs');
@@ -78,11 +82,18 @@ app.get('/campgrounds/:id/edit', async(req,res) => {
    res.render('campgrounds/edit', {campground});
 })
 
-// update
+// update 
 app.put('/campgrounds/:id', async(req, res) => {
     const {id} = req.params;
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground});
     res.redirect(`/campgrounds/${campground._id}`)
+})
+
+// delete
+app.delete('/campgrounds/:id', async(req,res)=> {
+    const {id} = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect('/campgrounds')
 })
 
 // set up listening portal at 3000

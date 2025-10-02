@@ -28,14 +28,17 @@ db.once("open", () => {
 // generate random campground titles
 const sample = array => array[Math.floor(Math.random() * array.length)]
 
-
 const seedDB = async () => {
     await Campground.deleteMany({}); // clears all existing campground data
     for (let i =0; i <50; i++) { //create 50 new campground entries 
         const random1000 = Math.floor(Math.random() * 1000);
+        const price = Math.floor(Math.random() * 20) + 10;
         const camp = new Campground({
             location: `${cities[random1000].city}, ${cities[random1000].state}`, // randome city state
-            title: `${sample(descriptors)} ${sample(places)}` // random combo of descriptor and place
+            title: `${sample(descriptors)} ${sample(places)}`, // random combo of descriptor and place
+            image: `https://picsum.photos/400?random=${Math.random()}`,
+            description: 'lorem ipsum asda sdas dasd asd asd asd asd ad',
+            price
         })
         await camp.save();
     }
